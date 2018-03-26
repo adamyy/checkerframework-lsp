@@ -1,0 +1,23 @@
+{
+	"name": "lsp-sample",
+	"description": "Example implementation of a language server in node.",
+	"version": "0.0.1",
+	"author": "Microsoft Corporation",
+	"license": "MIT",
+	"engines": {
+		"node": "*"
+	},
+	"dependencies": {
+		"vscode-languageserver": "^4.0.0"
+	},
+	"devDependencies": {
+		"typescript": "^2.7.2",
+		"@types/mocha": "^2.2.42",
+		"@types/node": "^8.0.26"
+	},
+	"scripts": {
+		"installServer": "installServerIntoExtension ../client ./package.json ./tsconfig.json",
+		"compile": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc -p .",
+		"watch": "installServerIntoExtension ../client ./package.json ./tsconfig.json && tsc -w -p ."
+	}
+}
