@@ -132,6 +132,7 @@ function validateJavaDocument(languageId: string, uri: string): void {
 	let diagnostics: Diagnostic[] = [];
 	let filePath = uriToPath(uri);
 	let requestBody = `${checkers},${filePath}`;
+	console.log(`validateJava checkers: ${checkers}`);
 	child.stdin.write(`${uri},${checkers},${filePath},${jdkpath}\n`);
 	console.log("child process still alive");	
 }

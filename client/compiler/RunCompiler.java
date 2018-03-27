@@ -3,6 +3,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import org.checkerframework.framework.util.PluginUtil;
 
 import com.google.gson.Gson;
 
@@ -28,9 +29,10 @@ public class RunCompiler {
                 Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjects(filePath);
                 options.add("-Xbootclasspath/p:"+jarPath);
                 options.add("-processor");
-                for (String checker : checkers){
-                    options.add(checker);
-                }
+                options.add(PluginUtil.join(",", checkers));
+//                for (String checker : checkers){
+//                    options.add(checker);
+//                }
 
                 JavaCompiler.CompilationTask task = compiler
                         .getTask(javacOutput, fileManager, diagnostics, options, new ArrayList<String>(), javaFiles);
