@@ -54,12 +54,13 @@
 					"default": 20,
 					"description": "Controls the maximum number of problems produced by the server."
 				},
-				"checker-framework.classpath": {
-					"type": "array",
-					"items": {
-						"type": "string"
-					},
-					"description": "Location of Java classpath, first path is used as class destination."
+				"checker-framework.frameworkpath": {
+					"type": "string",
+					"description": "Location of your Checker Framework"
+				},
+				"checker-framework.gsonpath": {
+					"type": "string",
+					"description": "Location of your GSON library"
 				}
 			}
 		}

@@ -4,7 +4,7 @@ import {
 	IPCMessageReader, IPCMessageWriter,
 	createConnection, IConnection, TextDocumentSyncKind,
 	TextDocuments, TextDocument, Diagnostic, DiagnosticSeverity,
-	InitializeParams, InitializeResult
+	InitializeParams, InitializeResult, ShowMessageRequest, MessageType
 } from 'vscode-languageserver';
 
 import * as fs from 'fs';
@@ -26,13 +26,10 @@ let workspaceRoot: string;
 let maxNumberOfProblems: number;
 let enable: boolean;
 let checkers: any;
-let classpath: any;
 let child: any;
 
 let compilerpath = `:${__dirname}/../compiler`;
-let checkerpath = `:${process.env.CHECKERFRAMEWORK}/checker/dist/checker.jar`;
-let jdkpath = `${process.env.CHECKERFRAMEWORK}/checker/dist/jdk8.jar`;
-let gsonpath = `:${process.env.GSON}`;
+let jdkpath: any;
 
 // The settings interface describe the server relevant settings part
 interface Settings {
@@ -42,7 +39,8 @@ interface CheckerSettings {
 	maxNumberOfProblems: number;
 	enable: boolean;
 	checkers: any;
-	classpath: any;
+	frameworkpath: any;
+	gsonpath: any;
 }
 
 function uriToPath(uri: string): string {
@@ -66,15 +64,22 @@ connection.onInitialize((params): InitializeResult => {
 // The settings have changed.
 connection.onDidChangeConfiguration((change) => {
 	let settings = <Settings>change.settings;
-	maxNumberOfProblems = settings["checker-framework"].maxNumberOfProblems || 100;
-	enable = settings["checker-framework"].enable || false;
-	checkers = settings["checker-framework"].checkers.join(":") || "";
-	classpath = `:${settings["checker-framework"].classpath.join(":")}` || "";
-	if (classpath == ":") {
-		classpath = "";
+	maxNumberOfProblems = (<CheckerSettings>settings["checker-framework"]).maxNumberOfProblems || 100;
+	enable = (<CheckerSettings>settings["checker-framework"]).enable || false;
+	checkers = (<CheckerSettings>settings["checker-framework"]).checkers.join(":") || "";
+	let frameworkpath = (<CheckerSettings>settings["checker-framework"]).frameworkpath || "";
+	let gsonpath = `:${(<CheckerSettings>settings["checker-framework"]).gsonpath}`;
+
+	if (frameworkpath == "" || gsonpath == ""){
+		let msg = { type: MessageType.Error, message: "Missing path to checker framework or gson library, please specify in user settings" };
+		let req = connection.sendRequest('window/showMessageRequest', msg);
+		return;
 	}
+	let checkerpath = `:${(<CheckerSettings>settings["checker-framework"]).frameworkpath}/checker/dist/checker.jar`;
+	jdkpath = `${(<CheckerSettings>settings["checker-framework"]).frameworkpath}/checker/dist/jdk8.jar`;
+	
 	if (child == null) {
-		child = spawn('java',['-cp', `.${compilerpath}${gsonpath}${checkerpath}${classpath}`, 'RunCompiler']);	
+		child = spawn('java',['-cp', `.${compilerpath}${gsonpath}${checkerpath}`, 'RunCompiler']);	
 		child.on('exit', function (code, signal) {
 			console.log('child process exited with ' +
 						`code ${code} and signal ${signal}`);
@@ -108,6 +113,8 @@ function sendDiagnostics(data: string): void {
 	for(let i=0; i<Math.min(numberOfProblems, maxNumberOfProblems); i++){
 		let diganosticItem = diagnosticsList[i];
 		if (diganosticItem.line <= 0 || diganosticItem.start <= 0 || diganosticItem.end <= 0){
+			let msg = { type: MessageType.Error, message: diganosticItem.message };
+			let req = connection.sendRequest('window/showMessageRequest', msg);
 			console.log(diganosticItem.message);
 		} else {
 			diagnostics.push({
@@ -132,7 +139,5 @@ function validateJavaDocument(languageId: string, uri: string): void {
 	let diagnostics: Diagnostic[] = [];
 	let filePath = uriToPath(uri);
 	let requestBody = `${checkers},${filePath}`;
-	console.log(`validateJava checkers: ${checkers}`);
 	child.stdin.write(`${uri},${checkers},${filePath},${jdkpath}\n`);
-	console.log("child process still alive");	
 }
