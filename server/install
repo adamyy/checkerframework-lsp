@@ -1,0 +1,7 @@
+#!/bin/bash
+
+npm run compile
+(cd compiler && ./gradlew installDist)
+(cd compiler && ./gradlew copyDistributionToDist)
+
+cp -r compiler/dist/vscode-extension ../client/server

@@ -2,9 +2,9 @@ import * as vscode from "vscode"
 import * as path from 'path';
 import * as fs from 'fs';
 import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } from 'vscode-languageclient';
-import { workspace } from "vscode";
+import { workspace, ExtensionContext } from "vscode";
 
-export async function activate(context: vscode.ExtensionContext) {
+export function activate(context: ExtensionContext) {
 	let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
 	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
 
@@ -23,5 +23,3 @@ export async function activate(context: vscode.ExtensionContext) {
 	let disposable = new LanguageClient('checker-framework', 'Checker Framework', serverOptions, clientOptions).start();
 	context.subscriptions.push(disposable);
 }
-
-export function deactivate() { }
