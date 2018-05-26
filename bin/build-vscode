@@ -1,0 +1,14 @@
+#!/bin/bash
+
+echo "installing npm dependencies for vscode-server"
+(cd ../vscode-server && npm install)
+
+echo "installing npm dependencies for vscode-client"
+(cd ../vscode-client && npm install)
+
+echo "installing vscode-server"
+(cd ../vscode-server && npm run compile)
+
+echo "installing lsp-javac"
+(cd ../lsp-javac && ./gradlew distribute)
+cp -r ../lsp-javac/dist/lsp-javac ../vscode-client/server
