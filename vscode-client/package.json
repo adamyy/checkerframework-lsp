@@ -4,8 +4,9 @@
 	"description": "Checker Framework Extension for VS Code",
 	"version": "0.0.1",
 	"icon": "images/icon.png",
-	"publisher": "nadouamanda",
+	"publisher": "adamyy",
 	"license": "MIT",
+	"homepage": "https://github.com/adamyy/checkerframework-lsp/blob/master/vscode-client/README.md",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/adamyy/checkerframework-lsp"
