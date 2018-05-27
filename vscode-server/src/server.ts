@@ -7,9 +7,8 @@ import {
 	InitializeParams, InitializeResult, ShowMessageRequest, MessageType,
 	DidChangeConfigurationParams, DidSaveTextDocumentParams, DidOpenTextDocumentParams, DidChangeTextDocumentParams
 } from 'vscode-languageserver';
-import { WorkspaceFoldersFeature } from 'vscode-languageserver/lib/workspaceFolders';
 
-import { checkerSettings, checkerPath, frameworkPath, javacLibPath, jdkPath, onConfigurationChanges } from './settings';
+import { checkerSettings, checkerPath, frameworkPath, javacLibPath, jdkPath, outputDir, onConfigurationChanges } from './settings';
 import { uriToPath, pathToUri } from './utils';
 import { DiagnosticsItem, DiagnosticsResponse, toVscodeSeverity } from './protocol'
 
@@ -25,6 +24,7 @@ let workspaceRoot: string;
 let javacProcess: any;
 
 connection.onInitialize((params): InitializeResult => {
+	console.log(JSON.stringify(params));
 	workspaceRoot = params.rootPath;
 	return {
 		capabilities: {
@@ -35,7 +35,7 @@ connection.onInitialize((params): InitializeResult => {
 });
 
 connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
-	console.log(`Changed configuration ${change.settings}`);
+	console.log(`Changed configuration ${JSON.stringify(change)}`);
 	onConfigurationChanges(change);
 
 	if (frameworkPath() == "") {
@@ -60,6 +60,10 @@ connection.onDidChangeConfiguration((change: DidChangeConfigurationParams) => {
 		javacProcess.stdout.on('data', (data) => {
 			sendDiagnostics(data);
 		});
+
+		javacProcess.stderr.on('data', (data) => {
+			console.log(`javac: ${data}`);
+		});
 	}
 
 	documents.all().forEach((doc : TextDocument) => {
@@ -81,6 +85,11 @@ connection.onDidSaveTextDocument((change: DidSaveTextDocumentParams) => {
 function sendDiagnostics(data: string) {
 	let response = <DiagnosticsResponse>JSON.parse(data);
 	console.log(`Parsed diagnostic: ${JSON.stringify(response)}}`);
+
+	if (response.error) {
+		let msg = { type: MessageType.Error, message: response.error.message };
+		let req = connection.sendRequest('window/showMessageRequest', msg);
+	}
 
 	let invalidDianostic = (diagnosticItem: DiagnosticsItem) => {
 		return diagnosticItem.line <= 0 || diagnosticItem.start <= 0 && diagnosticItem.end <= 0
@@ -114,9 +123,9 @@ function sendDiagnostics(data: string) {
 
 function validateJavaDocument(languageId: string, uri: string) {
 	if (!checkerSettings.enable || languageId != "java") return;
-	console.log(`Sending diagnostic request for ${uri}`);
 	let filePath = uriToPath(uri);
 	let checkers = checkerSettings.checkers.join(":");
-	let requestBody = `${checkers},${filePath}`;
-	javacProcess.stdin.write(`${uri},${checkers},${filePath},${jdkPath()}\n`);
+	let outputDirectory = outputDir(workspaceRoot);
+	console.log(`${uri},${checkers},${filePath},${jdkPath()},${outputDirectory}\n`);
+	javacProcess.stdin.write(`${uri},${checkers},${filePath},${jdkPath()},${outputDirectory}\n`);
 }

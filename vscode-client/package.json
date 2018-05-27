@@ -8,9 +8,9 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/nadouamanda/checkerframework-vscode-extension"
+		"url": "https://github.com/adamyy/checkerframework-lsp"
 	},
-	"bugs": "https://github.com/nadouamanda/checkerframework-vscode-extension/issues",
+	"bugs": "https://github.com/adamyy/checkerframework-lsp/issues",
 	"engines": {
 		"vscode": "^1.18.x"
 	},
@@ -59,7 +59,12 @@
 				"checker-framework.frameworkpath": {
 					"type": "string",
 					"default": "",
-					"description": "Location of your Checker Framework"
+					"description": "Absolute path of the Checker Framework."
+				},
+				"checker-framework.tempOutputDir": {
+					"type": "string",
+					"default": "build/tmp/checkerframework",
+					"description": "Relative path of the directory for storing temporary output files."
 				}
 			}
 		}

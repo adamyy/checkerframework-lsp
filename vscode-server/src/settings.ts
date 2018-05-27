@@ -11,6 +11,7 @@ interface CheckerSettings {
 	readonly enable: boolean;
 	readonly checkers: string[];
     readonly frameworkpath: string;
+    readonly tempOutputDir: string;
 }
 
 export let checkerSettings: CheckerSettings;
@@ -33,4 +34,8 @@ export function checkerPath(): string {
 
 export function jdkPath(): string {
     return `${checkerSettings.frameworkpath}/checker/dist/jdk8.jar`;
+}
+
+export function outputDir(workspaceRoot: string): string {
+    return `${workspaceRoot}/${checkerSettings.tempOutputDir}`;
 }

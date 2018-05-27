@@ -12,8 +12,12 @@ export interface DiagnosticsItem {
 
 export interface DiagnosticsResponse {
 	uri: string,
-	compiledWithoutError: boolean,
 	diagnosticsItemList: DiagnosticsItem[],
+	error?: DiagnosticsError,
+}
+
+export interface DiagnosticsError {
+	message: string
 }
 
 export function toVscodeSeverity(severity: string): DiagnosticSeverity {

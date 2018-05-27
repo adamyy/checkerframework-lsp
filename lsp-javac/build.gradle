@@ -24,9 +24,14 @@ mainClassName = 'org.checkerframework.vscode.RunJavac'
 
 task distribute(group: 'Distribution', dependsOn: 'installDist') {
     description 'Build, install, and copy distribution to dist directory.'
-    copy {
-        from "${buildDir}/install/"
-        into "${projectDir}/dist"
+    doFirst {
+        installDist
+    }
+    doLast {
+        copy {
+            from "${buildDir}/install/"
+            into "${projectDir}/dist"
+        }
     }
 }
 

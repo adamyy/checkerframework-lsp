@@ -22,21 +22,32 @@ public class RunJavac {
         }
 
         final DiagnosticsRequest request = DiagnosticsRequest.fromString(line);
+
+        final File outputDirectory = new File(request.outputDir);
+        outputDirectory.mkdirs();
+
         final StringWriter javacOutput = new StringWriter();
         final DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         final StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+        final Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjects(request.filePath);
         final List<String> options = new ArrayList<>();
         options.add("-Xbootclasspath/p:" + request.jarPath);
         options.add("-processor");
         options.add(PluginUtil.join(",", request.checkers));
+        options.add("-d");
+        options.add(request.outputDir);
 
-        final Iterable<? extends JavaFileObject> javaFiles = fileManager.getJavaFileObjects(request.filePath);
         final JavaCompiler.CompilationTask task = compiler
             .getTask(javacOutput, fileManager, diagnostics, options, new ArrayList<>(), javaFiles);
-        final Boolean compiledWithoutError = task.call();
 
-        DiagnosticsResponse response =
-            DiagnosticsResponse.fromJavaDiagnostics(request.uri, compiledWithoutError, diagnostics.getDiagnostics());
+        DiagnosticsResponse response;
+
+        try {
+          task.call();
+          response = DiagnosticsResponse.fromJavaDiagnostics(request.uri, diagnostics.getDiagnostics());
+        } catch (Exception e) {
+          response = DiagnosticsResponse.fromThrowable(request.uri, e);
+        }
 
         try {
           log.write(response.toJson());
