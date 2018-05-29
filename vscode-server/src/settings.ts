@@ -10,7 +10,7 @@ interface CheckerSettings {
 	readonly maxNumberOfProblems: number;
 	readonly enable: boolean;
 	readonly checkers: string[];
-    readonly frameworkpath: string;
+    readonly frameworkPath: string;
     readonly tempOutputDir: string;
 }
 
@@ -25,15 +25,15 @@ export function javacLibPath(): string {
 }
 
 export function frameworkPath(): string {
-    return checkerSettings.frameworkpath;
+    return checkerSettings.frameworkPath;
 }
 
 export function checkerPath(): string {
-    return `${checkerSettings.frameworkpath}/checker/dist/checker.jar`;
+    return `${checkerSettings.frameworkPath}/checker/dist/checker.jar`;
 }
 
 export function jdkPath(): string {
-    return `${checkerSettings.frameworkpath}/checker/dist/jdk8.jar`;
+    return `${checkerSettings.frameworkPath}/checker/dist/jdk8.jar`;
 }
 
 export function outputDir(workspaceRoot: string): string {

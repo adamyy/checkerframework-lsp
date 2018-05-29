@@ -1,7 +1,5 @@
 package org.checkerframework.vscode;
 
-import com.google.gson.Gson;
-
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
 import java.util.ArrayList;
@@ -16,10 +14,6 @@ class DiagnosticsResponse {
     this.uri = uri;
     this.diagnosticsItemList = list;
     this.error = error;
-  }
-
-  String toJson() {
-    return new Gson().toJson(this);
   }
 
   static DiagnosticsResponse fromJavaDiagnostics(String uri, List<Diagnostic<? extends JavaFileObject>> diagnostics) {

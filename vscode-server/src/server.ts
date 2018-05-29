@@ -9,8 +9,8 @@ import {
 } from 'vscode-languageserver';
 
 import { checkerSettings, checkerPath, frameworkPath, javacLibPath, jdkPath, outputDir, onConfigurationChanges } from './settings';
-import { uriToPath, pathToUri } from './utils';
-import { DiagnosticsItem, DiagnosticsResponse, toVscodeSeverity } from './protocol'
+import { uriToPath, pathToUri, toVscodeSeverity } from './utils';
+import { DiagnosticsItem, DiagnosticsResponse, DiagnosticsRequest } from './protocol'
 
 const { spawn } = require('child_process');
 
@@ -123,9 +123,14 @@ function sendDiagnostics(data: string) {
 
 function validateJavaDocument(languageId: string, uri: string) {
 	if (!checkerSettings.enable || languageId != "java") return;
-	let filePath = uriToPath(uri);
-	let checkers = checkerSettings.checkers.join(":");
-	let outputDirectory = outputDir(workspaceRoot);
-	console.log(`${uri},${checkers},${filePath},${jdkPath()},${outputDirectory}\n`);
-	javacProcess.stdin.write(`${uri},${checkers},${filePath},${jdkPath()},${outputDirectory}\n`);
+	let request: DiagnosticsRequest = {
+		uri: uri,
+		checkers: checkerSettings.checkers,
+		filePath: uriToPath(uri),
+		jarPath: jdkPath(),
+		outputDir: outputDir(workspaceRoot)
+	}
+	console.log(JSON.stringify(request));
+	javacProcess.stdin.write(`${JSON.stringify(request)}\n`);
+	// javacProcess.stdin.write(`${uri},${checkers},${filePath},${jdkPath()},${outputDirectory}\n`);
 }

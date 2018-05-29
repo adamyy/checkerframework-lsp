@@ -1,5 +1,6 @@
 package org.checkerframework.vscode;
 
+import com.google.gson.Gson;
 import org.checkerframework.javacutil.PluginUtil;
 
 import javax.tools.*;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class RunJavac {
   public static void main(String[] args) {
+    final Gson gson = new Gson();
     final BufferedWriter log = new BufferedWriter(new OutputStreamWriter(System.out));
     final BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
     final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -21,7 +23,7 @@ public class RunJavac {
           continue;
         }
 
-        final DiagnosticsRequest request = DiagnosticsRequest.fromString(line);
+        final DiagnosticsRequest request = gson.fromJson(line, DiagnosticsRequest.class);
 
         final File outputDirectory = new File(request.outputDir);
         outputDirectory.mkdirs();
@@ -50,7 +52,7 @@ public class RunJavac {
         }
 
         try {
-          log.write(response.toJson());
+          log.write(gson.toJson(response));
           log.flush();
         } catch (Exception e) {
           e.printStackTrace();

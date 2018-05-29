@@ -1,6 +1,6 @@
 'use strict';
 
-import URI from "vscode-uri";
+import { DiagnosticSeverity } from 'vscode-languageserver-types'
 
 export function isWindows(): boolean {
     return /^win/.test(process.platform);
@@ -16,4 +16,15 @@ export function uriToPath(uri: string): string {
 
 export function pathToUri(p: string): string {
     return 'file://' + (isWindows() ? '/' + p.replace(/\//g, '/') : p);
+}
+
+export function toVscodeSeverity(severity: string): DiagnosticSeverity {
+	const dict = {
+		"ERROR": DiagnosticSeverity.Error,
+		"WARNING": DiagnosticSeverity.Warning,
+		"MANDATORY_WARNING": DiagnosticSeverity.Warning,
+		"NOTE": DiagnosticSeverity.Information,
+		"OTHER": DiagnosticSeverity.Information
+	}
+	return dict[severity];
 }
