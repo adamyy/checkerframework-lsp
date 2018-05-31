@@ -5,7 +5,7 @@ import { LanguageClient, LanguageClientOptions, ServerOptions, TransportKind } f
 import { workspace, ExtensionContext } from "vscode";
 
 export function activate(context: ExtensionContext) {
-	let serverModule = context.asAbsolutePath(path.join('server', 'server.js'));
+	let serverModule = context.asAbsolutePath(path.join('out', 'server.js'));
 	let debugOptions = { execArgv: ["--nolazy", "--debug=6009"] };
 
 	let serverOptions: ServerOptions = {
