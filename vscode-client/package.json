@@ -2,7 +2,7 @@
 	"name": "checker-framework",
 	"displayName": "Checker Framework",
 	"description": "Checker Framework Extension for VS Code",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"icon": "images/icon.png",
 	"publisher": "adamyy",
 	"license": "MIT",
@@ -38,11 +38,6 @@
 			"type": "object",
 			"title": "Checker Framework configuration",
 			"properties": {
-				"checker-framework.enable": {
-					"type": "boolean",
-					"default": true,
-					"description": "enable/disable the checker framework without restart."
-				},
 				"checker-framework.checkers": {
 					"type": "array",
 					"items": {
@@ -53,20 +48,18 @@
 					],
 					"description": "List of checkers enabled for compilation. More details in: https://checkerframework.org/manual/#running"
 				},
-				"checker-framework.maxNumberOfProblems": {
-					"type": "number",
-					"default": 100,
-					"description": "Controls the maximum number of problems produced by the server."
-				},
 				"checker-framework.frameworkPath": {
 					"type": "string",
 					"default": "",
 					"description": "Absolute path of the Checker Framework."
 				},
-				"checker-framework.tempOutputDir": {
-					"type": "string",
-					"default": "build/tmp/checkerframework",
-					"description": "Relative path of the directory for storing temporary output files."
+				"checker-framework.commandLineOptions": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					},
+					"default": [],
+					"description": "List of command line options that gets passed in to javac. See available options in: https://checkerframework.org/manual/#running"
 				}
 			}
 		}
@@ -79,14 +72,12 @@
 	},
 	"devDependencies": {
 		"typescript": "^2.8.3",
-		"vscode": "^1.1.12",
 		"mocha": "^3.5.0",
 		"@types/node": "^8.0.26",
 		"@types/mocha": "^2.2.42"
 	},
 	"dependencies": {
 		"vscode": "^1.1.12",
-		"vscode-languageclient": "^4.0.0",
-		"vscode-languageserver": "^4.1.3"
+		"vscode-languageclient": "^4.0.0"
 	}
 }

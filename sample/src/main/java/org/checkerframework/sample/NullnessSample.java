@@ -4,7 +4,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class NullnessSample {
   public static void assignNull() {
-    @NonNull String str = "nah";
+    @NonNull String str = null;
     System.out.println(str);
   }
 

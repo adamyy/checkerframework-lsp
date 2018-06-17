@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "building lsp-javac"
+(cd ../lsp-javac && ./gradlew clean fatJar)
+
+echo "installing vscode"
+cp -r ../lsp-javac/build/libs ../vscode-client/out

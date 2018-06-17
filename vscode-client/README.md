@@ -8,11 +8,9 @@
 
 3. Configure VS Code settings. Available settings are:
 
-	- `checker-framework.frameworkpath`: (mandatory) the absolute path of the Checker Framework
-	- `checker-framework.tempOutputDir`: the relative path of the directory for storing temporary compiled output files, default to **build/tmp/checkerframework**
-	- `checker-framework.enable`: enabling/disabling the Checker Framework without restarting VS Code, default to **true**
+	- `checker-framework.frameworkPath`: (mandatory) the absolute path of the Checker Framework
 	- `checker-framework.checkers`: a list of checkers you would like the framework to check. More details [here](https://checkerframework.org/manual/#running)
-	- `checker-framework.maxNumberOfProblems`: maximum number of issues reported per file by the framework
+	- `checker-framework.commandLineOptions`: List of command line options that gets passed in to javac. See available options [here](https://checkerframework.org/manual/#running)
 
 4. Now Checker Framework can recognizes checkers you listed and provide in-line feedback upon opening and saving a Java file.
 
